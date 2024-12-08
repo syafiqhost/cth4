@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Searchable Cards</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+        
+        .search-container {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        #search-form {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        #search-input {
+            padding: 10px;
+            font-size: 16px;
+            width: 250px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            outline: none;
+        }
+        
+        #search-input:focus {
+            border-color: #007acc;
+            box-shadow: 0 0 5px rgba(0, 122, 204, 0.5);
+        }
+        
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            background-color: #007acc;
+            color: white;
+            cursor: pointer;
+        }
+        
+        button:hover {
+            background-color: #005f99;
+        }
+        
+        #card-container {
+            max-height: 60vh;
+            overflow-y: auto;
+            width: 100%;
+            position: relative;
+            /* Ensure it's positioned for stacking context */
+        }
+        
+        .card-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+            max-width: 1000px;
+            margin: 0 auto;
+            position: relative;
+            /* Ensure it's positioned for stacking context */
+        }
+        
+        .card {
+            background-color: white;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            width: 250px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            position: relative;
+            /* Ensure the card can be stacked */
+            z-index: 1;
+            /* Default z-index */
+            transition: z-index 0.3s ease;
+            /* Smooth transition for z-index */
+        }
+        
+        .card.highlight {
+            z-index: 10;
+            /* Increase z-index when card matches search */
+        }
+        
+        .card h3 {
+            margin: 0 0 10px;
+            font-size: 20px;
+            color: #333;
+        }
+        
+        .card p {
+            color: #555;
+            font-size: 14px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="search-container">
+        <form id="search-form">
+            <input type="text" id="search-input" placeholder="Cari sesuatu..." required>
+            <button type="submit">Cari</button>
+        </form>
+    </div>
+    <div class="card-container" id="card-container">
+        <div class="card" data-title="JavaScript">
+            <h3>JavaScript</h3>
+            <p>Bahasa pemrograman untuk web interaktif.</p>
+        </div>
+        <div class="card" data-title="HTML">
+            <h3>HTML</h3>
+            <p>Bahasa markup untuk struktur web.</p>
+        </div>
+        <div class="card" data-title="CSS">
+            <h3>CSS</h3>
+            <p>Bahasa desain untuk membuat web lebih menarik.</p>
+        </div>
+        <div class="card" data-title="React">
+            <h3>React</h3>
+            <p>Framework JavaScript untuk membangun UI modern.</p>
+        </div>
+        <div class="card" data-title="Python">
+            <h3>Python</h3>
+            <p>Bahasa serbaguna untuk berbagai aplikasi.</p>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('search-input').addEventListener('input', function(e) {
+            const searchValue = this.value.trim().toLowerCase();
+            const cards = document.querySelectorAll('.card');
+            let found = false;
+
+            cards.forEach(card => {
+                const title = card.getAttribute('data-title').toLowerCase();
+
+                // Cek apakah teks pencarian cocok dengan awalan data-title
+                if (title.startsWith(searchValue)) {
+                    card.style.display = 'block'; // Tampilkan card yang cocok
+                    card.classList.remove('highlight'); // Hapus highlight sebelumnya
+                    found = true;
+                } else {
+                    card.style.display = 'none'; // Sembunyikan card yang tidak cocok
+                }
+            });
+
+            // Jika input kosong, tampilkan semua card
+            if (searchValue === '') {
+                cards.forEach(card => {
+                    card.style.display = 'block';
+                    card.classList.remove('highlight'); // Hapus highlight jika input kosong
+                });
+            }
+
+            // Jika ada hasil yang ditemukan, scroll ke card pertama yang ditemukan
+            if (found) {
+                const firstMatchingCard = document.querySelector('.card[style="display: block;"]');
+                if (firstMatchingCard) {
+                    firstMatchingCard.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start',
+                        inline: 'center'
+                    });
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>
